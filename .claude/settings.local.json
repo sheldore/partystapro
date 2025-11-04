@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(openspec list:*)",
+      "Bash(openspec validate:*)",
+      "Bash(openspec show:*)",
+      "SlashCommand(/openspec:apply add-web-comparison-interface)",
+      "Bash(openspec list:changes:*)",
+      "Bash(mkdir:*)",
+      "Bash(python app.py:*)",
+      "Bash(pip install:*)",
+      "Bash(=2.0.1)",
+      "Bash(timeout:*)",
+      "Bash(dir:*)",
+      "Bash(openspec archive update-template-validation-and-results:*)",
+      "Bash(openspec archive add-web-comparison-interface:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

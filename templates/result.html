@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比对结果 - 党员花名册在线比对工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>比对结果</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('index') }}" class="btn-secondary">返回首页</a>
+                <a href="{{ url_for('download') }}" class="btn-primary">下载完整报告</a>
+            </div>
+        </header>
+
+        <main class="result-main">
+            <!-- 统计摘要 -->
+            <div class="summary-section">
+                <div class="summary-card">
+                    <h3>单机库记录数</h3>
+                    <div class="summary-number">{{ data.local_preprocessed_count }}</div>
+                    <p>预处理后记录总数</p>
+                </div>
+                <div class="summary-card">
+                    <h3>全国库记录数</h3>
+                    <div class="summary-number">{{ data.national_preprocessed_count }}</div>
+                    <p>预处理后记录总数</p>
+                </div>
+                <div class="summary-card">
+                    <h3>单机多出人员</h3>
+                    <div class="summary-number">{{ data.local_extra_count }}</div>
+                    <p>仅存在于单机库中</p>
+                </div>
+                <div class="summary-card">
+                    <h3>全国多出人员</h3>
+                    <div class="summary-number">{{ data.national_extra_count }}</div>
+                    <p>仅存在于全国库中</p>
+                </div>
+                <div class="summary-card">
+                    <h3>字段差异</h3>
+                    <div class="summary-number">
+                        {% set total_diffs = data.field_diffs.values() | map(attribute='count') | sum %}
+                        {{ total_diffs }}
+                    </div>
+                    <p>各字段不一致记录总数</p>
+                </div>
+            </div>
+
+            <!-- 单机库预处理数据 -->
+            <div class="result-section">
+                <div class="section-header" onclick="toggleSection('local-preprocessed')">
+                    <h2>
+                        <span class="toggle-icon">▼</span>
+                        单机库完整数据（预处理后）
+                        <span class="count-badge">{{ data.local_preprocessed_count }}</span>
+                    </h2>
+                </div>
+                <div id="local-preprocessed" class="section-content collapsed">
+                    <div class="table-wrapper">
+                        {{ data.local_preprocessed | safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 全国库预处理数据 -->
+            <div class="result-section">
+                <div class="section-header" onclick="toggleSection('national-preprocessed')">
+                    <h2>
+                        <span class="toggle-icon">▼</span>
+                        全国库完整数据（预处理后）
+                        <span class="count-badge">{{ data.national_preprocessed_count }}</span>
+                    </h2>
+                </div>
+                <div id="national-preprocessed" class="section-content collapsed">
+                    <div class="table-wrapper">
+                        {{ data.national_preprocessed | safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 单机多出人员 -->
+            <div class="result-section">
+                <div class="section-header" onclick="toggleSection('local-extra')">
+                    <h2>
+                        <span class="toggle-icon">▼</span>
+                        单机多出人员
+                        <span class="count-badge">{{ data.local_extra_count }}</span>
+                    </h2>
+                </div>
+                <div id="local-extra" class="section-content">
+                    {{ data.local_extra | safe }}
+                </div>
+            </div>
+
+            <!-- 全国多出人员 -->
+            <div class="result-section">
+                <div class="section-header" onclick="toggleSection('national-extra')">
+                    <h2>
+                        <span class="toggle-icon">▼</span>
+                        全国多出人员
+                        <span class="count-badge">{{ data.national_extra_count }}</span>
+                    </h2>
+                </div>
+                <div id="national-extra" class="section-content">
+                    {{ data.national_extra | safe }}
+                </div>
+            </div>
+
+            <!-- 字段差异 -->
+            <div class="result-section">
+                <div class="section-header" onclick="toggleSection('field-diffs')">
+                    <h2>
+                        <span class="toggle-icon">▼</span>
+                        字段差异明细
+                    </h2>
+                </div>
+                <div id="field-diffs" class="section-content">
+                    {% for field, diff_data in data.field_diffs.items() %}
+                    <div class="field-diff-section">
+                        <div class="field-diff-header" onclick="toggleSection('diff-{{ field }}')">
+                            <h3>
+                                <span class="toggle-icon-small">►</span>
+                                {{ field }}差异
+                                <span class="count-badge-small">{{ diff_data.count }}</span>
+                            </h3>
+                        </div>
+                        <div id="diff-{{ field }}" class="field-diff-content collapsed">
+                            {{ diff_data.html | safe }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="action-section">
+                <a href="{{ url_for('download') }}" class="btn-download">下载完整比对报告 (Excel)</a>
+                <a href="{{ url_for('index') }}" class="btn-new-compare">开始新的比对</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 党员花名册在线比对工具</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // 结果页面特定的脚本
+        function toggleSection(id) {
+            const element = document.getElementById(id);
+            const header = element.previousElementSibling;
+            const icon = header.querySelector('.toggle-icon, .toggle-icon-small');
+
+            if (element.classList.contains('collapsed')) {
+                element.classList.remove('collapsed');
+                if (icon) icon.textContent = icon.classList.contains('toggle-icon') ? '▼' : '▼';
+            } else {
+                element.classList.add('collapsed');
+                if (icon) icon.textContent = icon.classList.contains('toggle-icon') ? '▶' : '►';
+            }
+        }
+
+        // 默认展开前两个区域
+        document.addEventListener('DOMContentLoaded', function() {
+            // 其他区域默认折叠
+            const fieldDiffContents = document.querySelectorAll('.field-diff-content');
+            fieldDiffContents.forEach(el => el.classList.add('collapsed'));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>党员花名册在线比对工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>党员花名册在线比对工具</h1>
+            <p class="subtitle">上传单机库和全国库文件，自动比对差异</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-box">
+                    <h2>单机党员花名册</h2>
+                    <a href="{{ url_for('download_local_template') }}" class="download-template-link">
+                        ⬇️ 下载单机模板
+                    </a>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="localFile" accept=".xls,.xlsx" class="file-input">
+                        <label for="localFile" class="file-label">
+                            <span class="file-icon">📁</span>
+                            <span class="file-text">选择文件</span>
+                        </label>
+                    </div>
+                    <div id="localStatus" class="status-message"></div>
+                    <div id="localProgress" class="progress-bar" style="display: none;">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="upload-box">
+                    <h2>全国党员花名册</h2>
+                    <a href="{{ url_for('download_national_template') }}" class="download-template-link">
+                        ⬇️ 下载全国模板
+                    </a>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="nationalFile" accept=".xls,.xlsx" class="file-input">
+                        <label for="nationalFile" class="file-label">
+                            <span class="file-icon">📁</span>
+                            <span class="file-text">选择文件</span>
+                        </label>
+                    </div>
+                    <div id="nationalStatus" class="status-message"></div>
+                    <div id="nationalProgress" class="progress-bar" style="display: none;">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-section">
+                <button id="compareBtn" class="btn-compare" disabled>开始比对</button>
+                <div id="compareProgress" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>正在比对中，请稍候...</p>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>使用说明</h3>
+                <ol>
+                    <li>分别上传<strong>单机党员花名册</strong>和<strong>全国党员花名册</strong>文件（支持.xls和.xlsx格式）</li>
+                    <li>系统会自动校验文件格式，确保表头与标准模板一致</li>
+                    <li>两个文件均校验通过后，点击"<strong>开始比对</strong>"按钮</li>
+                    <li>比对完成后，系统将跳转到结果页面，您可以查看详细差异并下载完整报告</li>
+                </ol>
+                <p class="note"><strong>注意：</strong>文件大小限制为10MB，仅支持.xls和.xlsx格式</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 党员花名册在线比对工具</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
