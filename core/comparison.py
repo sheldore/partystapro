@@ -41,7 +41,7 @@ class ComparisonEngine:
             # 计算党龄 - 使用异常处理避免日期格式错误
             try:
                 self.df_local['党龄'] = (
-                    pd.to_datetime('2024-12-31') -
+                    pd.to_datetime('2025-12-31') -
                     pd.to_datetime(self.df_local['入党时间'], errors='coerce')
                 ).dt.days // 365
             except Exception as e:
@@ -51,7 +51,7 @@ class ComparisonEngine:
             # 计算年龄 - 从身份证号提取出生日期
             try:
                 self.df_local['年龄'] = (
-                    pd.to_datetime('2024-12-31') -
+                    pd.to_datetime('2025-12-31') -
                     pd.to_datetime(
                         self.df_local['身份证号'].astype(str).str[6:14],
                         format='%Y%m%d',
@@ -64,7 +64,7 @@ class ComparisonEngine:
 
             # 判断人员类别
             self.df_local['人员类别'] = self.df_local['入党时间'].apply(
-                lambda x: '预备党员' if str(x).startswith('2024') else '正式党员'
+                lambda x: '预备党员' if str(x).startswith('2025') else '正式党员'
             )
 
             # 标准化身份证号
@@ -81,7 +81,7 @@ class ComparisonEngine:
             # 计算党龄
             try:
                 self.df_national['党龄'] = (
-                    pd.to_datetime('2024-12-31') -
+                    pd.to_datetime('2025-12-31') -
                     pd.to_datetime(self.df_national['入党日期'], errors='coerce')
                 ).dt.days // 365
             except Exception as e:
@@ -91,7 +91,7 @@ class ComparisonEngine:
             # 计算年龄
             try:
                 self.df_national['年龄'] = (
-                    pd.to_datetime('2024-12-31') -
+                    pd.to_datetime('2025-12-31') -
                     pd.to_datetime(
                         self.df_national['身份证号码'].astype(str).str[6:14],
                         format='%Y%m%d',

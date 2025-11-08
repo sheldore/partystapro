@@ -135,6 +135,9 @@ sudo systemctl daemon-reload
 sudo systemctl start c45-web
 sudo systemctl enable c45-web
 sudo systemctl status c45-web
+
+重启服务：
+sudo systemctl restart c45-web
 ```
 
 ### 10. 配置 Nginx 反向代理
@@ -172,6 +175,17 @@ server {
     error_log /var/log/nginx/c45-web-error.log;
 }
 ```
+### 解决静态资源无法加载问题
+```bash
+# 1. 赋予上级目录执行权限（允许 Nginx 用户进入目录）
+sudo chmod 755 /home
+sudo chmod 755 /home/c45app
+sudo chmod 755 /home/c45app/c4.5
+
+# 2. 赋予静态目录及文件读写权限（替换 NGINX_USER 为实际用户，如 www-data）
+sudo chown -R NGINX_USER:NGINX_USER /home/c45app/c4.5/static/
+sudo chmod -R 755 /home/c45app/c4.5/static/
+sudo chmod 644 /home/c45app/c4.5/static/*
 
 启用配置：
 
