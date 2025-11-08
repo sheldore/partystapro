@@ -58,8 +58,8 @@ source venv/bin/activate
 
 ```bash
 pip install --upgrade pip
-pip install -r requirements.txt
-pip install gunicorn
+pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+pip install gunicorn -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
 ```
 
 ### 6. 配置环境变量
