@@ -194,6 +194,64 @@ sudo ln -s /etc/nginx/sites-available/c45-web /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 ```
+  方案2：自签名证书（简单但浏览器会警告）
+
+  适合内部使用或测试环境。
+
+  步骤：
+
+  # 1. 创建证书目录
+  sudo mkdir -p /etc/ssl/flask_app
+  cd /etc/ssl/flask_app
+
+  # 2. 生成自签名证书
+  sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout server.key -out server.crt \
+    -subj "/C=CN/ST=Beijing/L=Beijing/O=MyOrg/CN=120.55.246.146"
+
+  # 3. 配置 Nginx
+  sudo nano /etc/nginx/sites-available/flask_app
+
+  添加配置：
+  ```nginx
+  server {
+      listen 443 ssl;
+      server_name 120.55.246.146;
+
+      ssl_certificate /etc/ssl/flask_app/server.crt;
+      ssl_certificate_key /etc/ssl/flask_app/server.key;
+      ssl_protocols TLSv1.2 TLSv1.3;
+      ssl_ciphers HIGH:!aNULL:!MD5;
+
+      location / {
+          proxy_pass http://127.0.0.1:5000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For
+          $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          client_max_body_size 10M;
+      }
+      location /static/ {
+          alias /home/c45app/c4.5/static/;
+          expires 30d;
+      }
+  }
+
+  # HTTP 重定向到 HTTPS
+  server {
+      listen 80;
+      server_name 120.55.246.146;
+      return 301 https://$server_name$request_uri;
+  }
+```
+  # 4. 启用并重启 Nginx
+  sudo ln -s /etc/nginx/sites-available/flask_app /etc/nginx/sites-enabled/
+  sudo nginx -t
+  sudo systemctl restart nginx
+
+  访问地址：https://120.55.246.146（浏览器会显示"不安全"警告，点击"
+  高级"→"继续访问"）
 
 ### 11. 配置 HTTPS（推荐）
 

@@ -48,7 +48,8 @@ class TemplateValidator:
                 )
 
             df_local = pd.read_excel(self.local_template_path)
-            self.local_template_columns = list(df_local.columns)
+            # 去除列名中的空格
+            self.local_template_columns = [str(col).strip() for col in df_local.columns]
             logger.info(
                 f"已加载单机库模板，包含 {len(self.local_template_columns)} 列"
             )
@@ -63,7 +64,8 @@ class TemplateValidator:
                 self.national_template_path,
                 sheet_name=0
             )
-            self.national_template_columns = list(df_national.columns)
+            # 去除列名中的空格
+            self.national_template_columns = [str(col).strip() for col in df_national.columns]
             logger.info(
                 f"已加载全国库模板，包含 {len(self.national_template_columns)} 列"
             )
@@ -98,7 +100,8 @@ class TemplateValidator:
 
             # 读取上传文件
             df_uploaded = pd.read_excel(file_path)
-            uploaded_columns = list(df_uploaded.columns)
+            # 去除列名中的空格
+            uploaded_columns = [str(col).strip() for col in df_uploaded.columns]
 
             # 比对列名（使用集合检查缺失和多余）
             template_set = set(self.local_template_columns)
@@ -196,8 +199,8 @@ class TemplateValidator:
 
             # 读取上传文件的第一张表
             df_uploaded = pd.read_excel(file_path, sheet_name=0)
-
-            uploaded_columns = list(df_uploaded.columns)
+            # 去除列名中的空格
+            uploaded_columns = [str(col).strip() for col in df_uploaded.columns]
 
             # 比对列名（使用集合检查缺失和多余）
             template_set = set(self.national_template_columns)
